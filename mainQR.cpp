@@ -271,22 +271,22 @@ void FranjasDeFormato(int fila, int columna){
 //Binario y tamaño de url
 void InferiorDerecha (string url){
     //definir lenguaje
-    matriz_qr[25][25] = BLANCO1;
-    matriz_qr[25][24] = NEGRO1;
-    matriz_qr[24][25] = BLANCO1;
-    matriz_qr[24][24] = BLANCO1;
+    matriz_qr[25][25] = BLANCO;
+    matriz_qr[25][24] = NEGRO;
+    matriz_qr[24][25] = BLANCO;
+    matriz_qr[24][24] = BLANCO;
     //Tamaño de la url
     bitset<8> tam = url.size();
     int j = 6;
     for (int i = 23; i >= 20; i--){
-        if (tam[j] == 1) matriz_qr[i][24] = NEGRO1;
-        else matriz_qr[i][24] = BLANCO1;
+        if (tam[j] == 1) matriz_qr[i][24] = NEGRO;
+        else matriz_qr[i][24] = BLANCO;
         j -= 2;
     }
     int s = 7;
     for (int k = 23; k >= 20; k--){
-        if (tam[s] == 1) matriz_qr[k][25] = NEGRO1;
-        else matriz_qr[k][25] = BLANCO1;
+        if (tam[s] == 1) matriz_qr[k][25] = NEGRO;
+        else matriz_qr[k][25] = BLANCO;
         s -= 2;
     }
 }
@@ -324,7 +324,7 @@ void zigzaig(string url, vector<bitset<8>>& binario, vector<int>& bitsDeParidad)
     int separacion[4] = {0, 0, 0, 0};
 
     // Llenado de la matriz QR con los bits de la URL
-    while (j >= 0) { // Primer while para saber que estamos dentro del rango que queremos rellenar
+    while (j > 7) { // Primer while para saber que estamos dentro del rango que queremos rellenar
         if (matriz_qr[i][j] == VACIO) {
             // RELLENAR
             if (cont_letras < binario.size()) { // Nos aseguramos de solo imprimir los bits totales del arreglo binario
@@ -343,7 +343,7 @@ void zigzaig(string url, vector<bitset<8>>& binario, vector<int>& bitsDeParidad)
                 matriz_qr[i][j] = bitsDeParidad[cont_paridad++];
             }
         }
-
+        
         if (direccion == 1) { // Primer IF: para saber si estamos subiendo
             if (i >= 1) { // IF 1.1 para saber si no hemos llegado al límite superior
                 if (posicion == 0) { // IF 1.2: posición 0 que significa que tenemos que hacer un movimiento diagonal
@@ -383,7 +383,55 @@ void zigzaig(string url, vector<bitset<8>>& binario, vector<int>& bitsDeParidad)
             } 
         } 
     }
-
+    direccion=0;
+    j=6;
+    i=1;
+    while (j>=0)
+    {
+        if (matriz_qr[i][j] == VACIO) {
+                if (cont_paridad < 128){
+                matriz_qr[i][j] = bitsDeParidad[cont_paridad++];
+            }
+        }
+                if (direccion == 1) { // Primer IF: para saber si estamos subiendo
+            if (i >= 1) { // IF 1.1 para saber si no hemos llegado al límite superior
+                if (posicion == 0) { // IF 1.2: posición 0 que significa que tenemos que hacer un movimiento diagonal
+                    j = j + 1; // Nos movemos una unidad a la derecha
+                    i = i - 1; // Nos movemos una unidad hacia arriba
+                    posicion = 1; // 1 significa que viene de abajo
+                }   
+                else { // ELSE 1.2: posición 1 que significa que tenemos que hacer un movimiento a la izquierda  
+                    j = j - 1; // Nos movemos una unidad a la izquierda
+                    posicion = 0; // 0 significa que viene de derecha
+                }
+            }   
+            else { // ELSE 1.1 para cambiar la dirección en la que vamos 
+                direccion = 0; // 4 significa que comenzamos a bajar
+                i = i + 1;   // Nos movemos una unidad hacia abajo (para hacer un ajuste en la coordenada "i")
+                j = j - 2;
+                posicion = 1;
+            }   
+        }   
+        else { // Primer ELSE: para saber que estamos bajando
+            if (i <= 25) { // IF 2.1 para saber si no hemos llegado al límite inferior
+                if (posicion == 0) { // IF 2.3: posición 0 que significa que tenemos que hacer un movimiento en diagonal
+                    j = j + 1; // Nos movemos una unidad a la derecha
+                    i = i + 1;  // Nos movemos una unidad hacia abajo
+                    posicion = 1; // 1 significa que viene de abajo
+                }   
+                else {  // ELSE 2.3: posición 1 que significa que tenemos que hacer un movimiento hacia la izquierda
+                    j = j - 1; // Nos movemos una unidad hacia la izquierda
+                    posicion = 0; // 0 significa que viene de derecha
+                }
+            }  
+            else { // ELSE 2.1 para saber cambiar de dirección
+                direccion = 1; // 3 significa que comenzamos a subir
+                i = i - 1;    // Nos movemos una unidad hacia arriba para hacer el ajuste en la coordenada "i"
+                j = j - 2;
+                posicion = 1;
+            } 
+        } 
+    }
 }
 
 // Funciones
